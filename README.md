@@ -1,1 +1,3 @@
-# Semester6Proj-Pakwear-roll--017--173-
+Semester: 6th
+Project Name: Pakwear
+Roll No: (-017, -173)
