@@ -1,0 +1,78 @@
+﻿@page "/cus"
+@using Client.Shared
+@using Pakwear.Shared
+@inject HttpClient Http
+@inject NavigationManager nvm
+
+<h3>Customer Form</h3>
+
+<EditForm Model="@customer" OnValidSubmit="@HandleOnSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label>
+        Enter Customer Id:
+        <InputNumber @bind-Value="customer.Id" />
+    </label>
+    <br>
+    <label>
+        Enter Customer Name:
+        <InputText @bind-Value="customer.Name" />
+    </label>
+    <br>
+    <label>
+        Enter Customer Roll Number:
+        <InputText @bind-Value="customer.RollNumber" />
+    </label>
+    <br>
+    <label>
+        Enter Customer DOB:
+        <InputDate @bind-Value="customer.DOB" />
+    </label>
+    <br>
+    <button type="submit">Submit</button>
+</EditForm>
+
+<p>@message</p>
+
+<table>
+    <thead>Id</thead>
+    <thead>Name</thead>
+    <thead>Roll</thead>
+
+    @foreach (cUSTOMERR cust in customers)
+    {
+        <tr>
+            <td>@cust.Id</td>
+            <td>@cust.Name</td>
+            <td>@cust.RollNumber</td>
+        </tr>
+    }
+</table>
+
+<Client.Components.CustomerComp customer="@customer" />
+
+@code {
+    cUSTOMERR customer = new cUSTOMERR()
+    {
+        DOB = DateTime.Now
+    };
+
+    List<cUSTOMERR> customers = new List<cUSTOMERR>();
+    string message = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await Http.GetFromJsonAsync<List<cUSTOMERR>>("/api/v1/Customer");
+    }
+
+    async void HandleOnSubmit()
+    {
+        var res = await Http.PostAsJsonAsync("/api/v1/Customer", customer);
+        if (res.IsSuccessStatusCode)
+        {
+            message = "Message: Save successful";
+            StateHasChanged();
+        }
+    }
+}
